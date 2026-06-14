@@ -3,6 +3,7 @@ import { scrapeAppleTV } from "./appletv";
 import { scrapeGoogleTV } from "./googletv";
 
 export async function scrapeAll(query: string) {
+
   const results = await Promise.all([
     scrapeNetflix(query),
 
@@ -11,5 +12,11 @@ export async function scrapeAll(query: string) {
     scrapeGoogleTV(query),
   ]);
 
-  return results.flat();
+  //console.log("SCRAPER RAW:", results);
+
+  const flattened = results.flat();
+
+  //console.log("SCRAPER FLAT:", flattened);
+
+  return flattened;
 }

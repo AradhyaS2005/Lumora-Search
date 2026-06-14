@@ -1,23 +1,36 @@
 import { normalizePlatform } from "@/utils/normalizePlatform";
-import type { Offer } from "@/types/movie";
+
 import { isValidPlatform } from "@/app/lib/filterOffers";
 
-export function buildOffers(rawOffers: any[] = []): Offer[] { // means If nothing is passed or it is undefined, use empty array instead
-  return rawOffers
-    .map((o) => {
-      const platform = normalizePlatform(o.platform);
+import type { Offer } from "@/types/movie";
 
-      if (!platform) return null;
+export function buildOffers(rawOffers: any[] = []): Offer[] {
 
-      if(!isValidPlatform(o.platform)) return null
+  const offers: Offer[] = [];
 
-      const offer: Offer = {
-        platform,
-        type: o.type,
-        price: o.price,
-      };
+  for (const o of rawOffers) {
 
-      return offer;
-    })
-    .filter((o): o is Offer => o !== null);  // removes all null values from the array, ensuring the return type is Offer[]
+    const platform = normalizePlatform(o.platform);
+
+    // skip invalid platforms
+    if (!platform) continue;
+
+    // skip studios like sony/lionsgate
+    if (!isValidPlatform(platform)) continue;
+
+    const offer: Offer = {
+      platform,
+
+      type: o.type,
+    };
+
+    // only add price if it exists
+    if (o.price !== undefined) {
+      offer.price = o.price;
+    }
+
+    offers.push(offer);
+  }
+
+  return offers;
 }

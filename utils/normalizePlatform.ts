@@ -1,7 +1,9 @@
 export function normalizePlatform(name: string) {
+
   const key = name.toLowerCase().trim();
 
-  const map: Record<string, string | null> = {
+  const map: Record<string, string> = {
+
     // Subscription
     netflix: "Netflix",
     "netflix india": "Netflix",
@@ -13,16 +15,16 @@ export function normalizePlatform(name: string) {
     "disney hotstar": "Disney+ Hotstar",
 
     zee5: "Zee5",
+
     sonyliv: "SonyLIV",
 
     "apple tv": "Apple TV",
     itunes: "Apple TV",
 
-    // Rental
+    // Rent / Buy
     "google tv": "Google TV",
     "youtube movies": "Google TV",
   };
 
-  // return null = IGNORE THIS ENTRY (important)
-  return map[key] ?? name;
+  return map[key] || name;
 }

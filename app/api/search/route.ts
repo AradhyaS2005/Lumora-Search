@@ -1,9 +1,8 @@
 import type { MovieResult } from "@/types/movie";
-
 import { processMovie } from "@/app/lib/pipeline";
 import { getCache, setCache } from "@/app/lib/cache";
-
 import { scrapeAll } from "@/scrapers";
+import { searchMovies } from "@/app/lib/tmdb"
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -20,27 +19,25 @@ export async function GET(request: Request) {
     return Response.json(cached);
   }
 
-  // fetch raw offers from scrapers
-  const rawOffers = await scrapeAll(query);
+  // fetch movies from TMDB
+  const movies = await searchMovies(query)
 
-  // build final movie object
-  const results: MovieResult[] = [
-    processMovie({
-      id: 1,
+  const results: MovieResult[] = await Promise.all(
+    movies.slice(0,5).map(async (movie: any) => {
+      const rawOffers = await scrapeAll(movie.title)
+      
+      return processMovie({
+        id: movie.id,
+        title: movie.title,
+        year: movie.release_date?.slice(0,4) || "Unknown",
+        poster:
+        movie.poster_path
+        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+        : "",
+        rawOffers,
+      })
+    })
+  )
 
-      title: query || "Interstellar",
-
-      year: "2014",
-
-      poster:
-        "https://image.tmdb.org/t/p/w500/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg",
-
-      rawOffers,
-    }),
-  ];
-
-  // save to cache
-  setCache(cacheKey, results);
-
-  return Response.json(results);
+  return Response.json(results)
 }
