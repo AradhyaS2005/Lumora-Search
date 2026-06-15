@@ -1,22 +1,29 @@
-import { scrapeNetflix } from "./netflix";
-import { scrapeAppleTV } from "./appletv";
-import { scrapeGoogleTV } from "./googletv";
+// import { scrapeNetflix } from "./netflix";
+// import { scrapeAppleTV } from "./appletv";
+// import { scrapeGoogleTV } from "./googletv";
 
-export async function scrapeAll(query: string) {
+// export async function scrapeAll(query: string) {
 
-  const results = await Promise.all([
-    scrapeNetflix(query),
+//   const results = await Promise.all([
+//     scrapeNetflix(query),
 
-    scrapeAppleTV(query),
+//     scrapeAppleTV(query),
 
-    scrapeGoogleTV(query),
-  ]);
+//     scrapeGoogleTV(query),
+//   ]);
 
-  //console.log("SCRAPER RAW:", results);
+//   //console.log("SCRAPER RAW:", results);
 
-  const flattened = results.flat();
+//   const flattened = results.flat();
 
-  //console.log("SCRAPER FLAT:", flattened);
+//   //console.log("SCRAPER FLAT:", flattened);
 
-  return flattened;
+//   return flattened;
+// }
+
+import { fetchJustWatchOffers } from "@/app/lib/justwatch";
+
+export async function scrapeAll(query: string){
+  const offers = await fetchJustWatchOffers(query)
+  return offers;
 }
