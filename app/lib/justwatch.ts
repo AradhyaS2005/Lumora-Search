@@ -1,72 +1,96 @@
-// import JustWatch from "justwatch-api";
-
-// const jw = new JustWatch({ locale: "en_IN" })
-
-// export async function fetchJustWatchOffers(query: string) {
-//     try {
-//         const results = await jw.search({
-//             query,
-//         })
-
-//         if (!results.items?.length) {
-//             return [];
-//         }
-
-//         const movie = results.items.find((item: any) =>
-//             item.title?.toLowerCase() === query.toLowerCase()
-//         ) || results.items[0];
-
-//         const offers = movie.offers || []
-
-//         return offers.map((offer: any) => {
-//             let type = "subscription"
-
-//             if (offer.monetization_type === "rent") {
-//                 type = "rent"
-//             }
-//             if (offer.monetization_type === "buy") {
-//                 type = "buy"
-//             }
-
-//             return {
-//                 platform:
-//                     offer.package?.clear_name || "Unkown",
-
-//                 type,
-
-//                 price:
-//                     offer.retail_price,
-//             }
-//         })
-//     } catch (err) {
-//         console.error("JUSTWATCH ERROR:", err)
-
-//         return []
-//     }
-// }
-
-const JustWatch = require("justwatch-api");
-
-const jw = new JustWatch({ locale: "en_IN" });
-
 export async function fetchJustWatchOffers(query: string) {
+  const res = await fetch(
+    "https://apis.justwatch.com/graphql",
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
 
-  try {
+      body: JSON.stringify({
+        operationName: "GetSearchResults",
 
-    const results = await jw.search({
-      query,
-    });
+        variables: {
+          country: "IN",
+          language: "en",
+          searchQuery: query,
+          first: 4,
+          location: "SearchSuggester",
+        },
 
-    console.log(
-      JSON.stringify(results, null, 2)
-    );
+        query: `
+          query GetSearchResults(
+            $country: Country!,
+            $language: Language!,
+            $first: Int!,
+            $searchQuery: String,
+            $location: String!
+          ) {
+            searchTitles(
+              country: $country
+              first: $first
+              filter: {
+                searchQuery: $searchQuery
+                includeTitlesWithoutUrl: true
+              }
+              source: $location
+            ) {
+              edges {
+                node {
+                  id
+                  objectId
 
-    return [];
+                  content(
+                    country: $country
+                    language: $language
+                  ) {
+                    title
+                    originalReleaseYear
+                  }
 
-  } catch (err) {
+                  offers(
+                    country: $country
+                    platform: WEB
+                    filter: { preAffiliate: true }
+                  ) {
+                    monetizationType
 
-    console.error(err);
+                    package {
+                      shortName
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+      }),
+    }
+  );
 
-    return [];
-  }
+  const data = await res.json();
+
+  
+
+  const firstMatch =
+  data.data.searchTitles.edges[0]?.node;
+
+if (!firstMatch) {
+  return [];
+}
+
+const mappedOffers = firstMatch.offers.map((offer: any) => ({
+  platform: offer.package.shortName,
+  type:
+    offer.monetizationType === "FLATRATE"
+      ? "subscription"
+      : offer.monetizationType === "RENT"
+      ? "rent"
+      : "buy",
+}));
+
+
+
+return mappedOffers;
+
 }

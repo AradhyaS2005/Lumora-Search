@@ -26,6 +26,7 @@ export async function GET(request: Request) {
     movies.slice(0,5).map(async (movie: any) => {
       const rawOffers = await scrapeAll(movie.title)
       
+      
       return processMovie({
         id: movie.id,
         title: movie.title,
