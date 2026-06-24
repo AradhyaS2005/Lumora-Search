@@ -20,7 +20,22 @@ export async function GET(request: Request) {
   }
 
   // fetch movies from TMDB
-  const movies = await searchMovies(query)
+  let movies = [];
+
+try {
+  movies = await searchMovies(query);
+} catch (err) {
+  console.error("TMDB search failed:", err);
+
+  return Response.json(
+    {
+      error: "Movie search temporarily unavailable",
+    },
+    {
+      status: 500,
+    }
+  );
+}
 
   const results: MovieResult[] = await Promise.all(
     movies.slice(0,5).map(async (movie: any) => {

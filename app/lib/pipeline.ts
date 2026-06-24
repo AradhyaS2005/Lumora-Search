@@ -4,7 +4,7 @@ import { cleanOffers } from "./cleanOffers";
 export function processMovie(rawMovie: any) {
   
 
-  const offers = buildOffers(rawMovie.rawOffers);
+  const offers = buildOffers(rawMovie.rawOffers.offers);
   const clean = cleanOffers(offers);
 
   return {
@@ -13,5 +13,6 @@ export function processMovie(rawMovie: any) {
     year: rawMovie.year,
     poster: rawMovie.poster,
     offers: clean,
+    offersUnavailable: rawMovie.rawOffers.unavailable,
   };
 }

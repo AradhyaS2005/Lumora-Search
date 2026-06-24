@@ -40,11 +40,27 @@ export default function MovieCard({ movie }: Props) {
   return (
     <div style={{ border: "1px solid #ddd", padding: 16, borderRadius: 8 }}>
       {/* Poster */}
-      <img
-        src={movie.poster}
-        alt={movie.title}
-        style={{ width: 120, borderRadius: 6 }}
-      />
+{movie.poster ? (
+  <img
+    src={movie.poster}
+    alt={movie.title}
+    style={{ width: 120, borderRadius: 6 }}
+  />
+) : (
+  <div
+    style={{
+      width: 120,
+      height: 180,
+      border: "1px solid #ddd",
+      borderRadius: 6,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    No Poster
+  </div>
+)}
 
       {/* Title */}
       <h2>{movie.title}</h2>

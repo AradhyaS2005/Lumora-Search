@@ -15,18 +15,32 @@ export default function SearchPage() {
   const [movies, setMovies] = useState<MovieResult[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!query) return;
+ useEffect(() => {
+  if (!query) return;
 
-    setLoading(true);
+  setLoading(true);
 
-    fetch(`/api/search?q=${encodeURIComponent(query)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setMovies(data);
-        setLoading(false);
-      });
-  }, [query]);
+  fetch(`/api/search?q=${encodeURIComponent(query)}`)
+    .then(async (res) => {
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Search failed");
+      }
+
+      return data;
+    })
+    .then((data) => {
+      setMovies(Array.isArray(data) ? data : []);
+    })
+    .catch((err) => {
+      console.error("Search error:", err);
+      setMovies([]);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+}, [query]);
 
   return (
   <div className="relative pt-12">
