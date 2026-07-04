@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 body {
-  background: #0a0a0a;
-  color: rgb(202, 226, 226);
-  font-family: Arial, Helvetica, sans-serif;
+ body{
+    background:#0B0F19;
+    color:white;
+}
 }
 
 .movie-card{

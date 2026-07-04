@@ -43,7 +43,9 @@ export default function SearchPage() {
 }, [query]);
 
   return (
-  <div className="relative pt-12">
+  <main className="flex-1">
+    <div className="max-w-7xl mx-auto px-6">
+      <div className="relative pt-12">
     <BackButton />
 
     <h1 className="m-4 text-xl font-semibold">
@@ -68,5 +70,7 @@ export default function SearchPage() {
         ))}
     </div>
   </div>
+    </div>
+  </main>
 );
 }

@@ -75,7 +75,9 @@ export default async function MoviePage({ params }: Props) {
     : "";
 
   return (
-    <div
+   <div className="content realtive z-10">
+    <div className="max-w-7xl mx-auto px-6 py-12">
+       <div
       className="movie-page"
       style={{ position: "relative" }}
     >
@@ -237,6 +239,8 @@ export default async function MoviePage({ params }: Props) {
 
       </div>
 
+    </div>     
     </div>
+   </div>
   );
 }
