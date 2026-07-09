@@ -1,99 +1,170 @@
 import type { MovieResult } from "@/types/movie";
 import { groupOffers } from "@/utils/groupOffers";
+import {
+  Popcorn,
+  ShoppingCart,
+  IndianRupee,
+} from "lucide-react";
 
 type Props = {
   movie: MovieResult;
 };
 
 // Optional: map platform codes → readable names
-const platformMap: Record<string, string> = {
-  nfx: "Netflix",
-  amz: "Amazon Prime",
-  zee: "Zee5",
-  itv: "iTunes",
-  pva: "Prime Video",
-  prv: "Provider",
-  vim: "Vimeo",
-  asa: "ASA",
+type platformInfo = {
+  name: string;
+  logo?: string;
+};
+
+const platformMap: Record<string, platformInfo> = {
+  "Netflix": {
+    name: "Netflix",
+    logo: "/logos/netflix.svg",
+  },
+
+  "Amazon Prime Video": {
+    name: "Amazon Prime Video",
+    logo: "/logos/prime-video.svg",
+  },
+
+  "Apple TV": {
+    name: "Apple TV",
+    logo: "/logos/apple-tv.svg",
+  },
+
+  "SonyLIV": {
+    name: "SonyLIV",
+    logo: "/logos/sonyliv.png",
+  },
+
+  "Zee5": {
+    name: "Zee5",
+    logo: "/logos/zee5.svg",
+  },
+
+  "Vimeo": {
+    name: "Vimeo",
+    logo: "/logos/vimeo.svg",
+  },
+
+  "Lionsgate Play": {
+    name: "Lionsgate Play",
+    logo: "/logos/lionsgate.svg",
+  },
 };
 
 export default function MovieCard({ movie }: Props) {
   const grouped = groupOffers(movie.offers);
 
-  const renderOffer = (o: any, type: string) => (
+  const renderOffer = (o: any, type: string) => {
+   
+    return(
+    
     <div
       key={`${type}-${o.platform}-${o.price ?? "free"}`}
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "4px 0",
-      }}
+      className="flex justify-between items-center py-2 border-b border-gray-800 last:border-0"
     >
-      <span>{platformMap[o.platform] ?? o.platform}</span>
+      <span className="text-gray-200">
+        <div className="w-25 h-15 bg-white rounded-lg flex items-center justify-center">
+          <img
+          src={platformMap[o.platform]?.logo}
+          alt={platformMap[o.platform]?.name}
+          title={platformMap[o.platform]?.name}
+          className="h-15 w-20 object-contain"
+        />
+        </div>
+        </span>
 
       {type !== "subscription" && o.price != null && (
-        <span>₹{o.price}</span>
+        <span className="font-semibold text-green-400">₹{o.price}</span>
       )}
     </div>
   );
+}
 
   return (
-    <div style={{ border: "1px solid #ddd", padding: 16, borderRadius: 8 }}>
-      {/* Poster */}
-{movie.poster ? (
-  <img
-    src={movie.poster}
-    alt={movie.title}
-    style={{ width: 120, borderRadius: 6 }}
-  />
-) : (
-  <div
-    style={{
-      width: 120,
-      height: 180,
-      border: "1px solid #ddd",
-      borderRadius: 6,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    }}
-  >
-    No Poster
-  </div>
-)}
+    <div className="bg-[#161B22] border border-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
+      <div className="flex gap-6">
 
-      {/* Title */}
-      <h2>{movie.title}</h2>
-      <p>{movie.year}</p>
-
-      {/* Subscription */}
-      <div>
-        <h3>Subscription</h3>
-        {grouped.subscription.length > 0 ? (
-          grouped.subscription.map((o) => renderOffer(o, "subscription"))
+        {/* Poster */}
+        {movie.poster ? (
+          <img
+            src={movie.poster}
+            alt={movie.title}
+            className="w-100 rounded-xl object-cover"
+          />
         ) : (
-          <p>Not available</p>
+          <div className="w-36 h-52 rounded-xl border border-gray-700 flex items-center justify-center text-gray-500">
+            No Poster
+          </div>
         )}
-      </div>
 
-      {/* Rent */}
-      <div>
-        <h3>Rent</h3>
-        {grouped.rent.length > 0 ? (
-          grouped.rent.map((o) => renderOffer(o, "rent"))
-        ) : (
-          <p>Not available</p>
-        )}
-      </div>
+        {/* Movie Info */}
+        <div className="flex-1">
 
-      {/* Buy */}
-      <div>
-        <h3>Buy</h3>
-        {grouped.buy.length > 0 ? (
-          grouped.buy.map((o) => renderOffer(o, "buy"))
-        ) : (
-          <p>Not available</p>
-        )}
+          <h2 className="text-3xl font-bold">
+            {movie.title}
+          </h2>
+
+          <p className="text-gray-400 mb-6">
+            {movie.year}
+          </p>
+
+          {/* Subscription */}
+          <div className="mb-5">
+            <h3 className="flex items-center gap-2 text-lg font-semibold mb-2">
+              <Popcorn size={18} />
+              Subscription
+            </h3>
+
+            {grouped.subscription.length > 0 ? (
+              grouped.subscription.map((o) =>
+                renderOffer(o, "subscription")
+              )
+            ) : (
+              <p className="text-gray-500">
+                Not available
+              </p>
+            )}
+          </div>
+
+          {/* Rent */}
+          <div className="mb-5">
+            <h3 className="flex items-center gap-2 text-lg font-semibold mb-2">
+              <IndianRupee size={18} />
+              Rent
+            </h3>
+
+            {grouped.rent.length > 0 ? (
+              grouped.rent.map((o) =>
+                renderOffer(o, "rent")
+              )
+            ) : (
+              <p className="text-gray-500">
+                Not available
+              </p>
+            )}
+          </div>
+
+          {/* Buy */}
+          <div>
+            <h3 className="flex items-center gap-2 text-lg font-semibold mb-2">
+              <ShoppingCart size={18} />
+              Buy
+            </h3>
+
+            {grouped.buy.length > 0 ? (
+              grouped.buy.map((o) =>
+                renderOffer(o, "buy")
+              )
+            ) : (
+              <p className="text-gray-500">
+                Not available
+              </p>
+            )}
+          </div>
+
+        </div>
       </div>
     </div>
   );
