@@ -10,5 +10,6 @@ export type MovieResult = {
   title: string;
   year: string;
   poster: string;
+  genres: number[];
   offers: Offer[];
 };

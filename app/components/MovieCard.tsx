@@ -1,5 +1,6 @@
 import type { MovieResult } from "@/types/movie";
 import { groupOffers } from "@/utils/groupOffers";
+import { genreMap } from "@/app/lib/genres";
 import {
   Popcorn,
   ShoppingCart,
@@ -56,6 +57,12 @@ const platformMap: Record<string, platformInfo> = {
 export default function MovieCard({ movie }: Props) {
   const grouped = groupOffers(movie.offers);
 
+  const genres = movie.genres
+    ?.slice(0, 2)
+    .map(id => genreMap[id])
+    .filter(Boolean) // this removes all false values like undefined or null or empty
+    .join(" • ");
+  //console.log("Genres:", genres);
   const renderOffer = (o: any, type: string) => {
    
     return(
@@ -65,7 +72,7 @@ export default function MovieCard({ movie }: Props) {
       className="flex justify-between items-center py-2 border-b border-gray-800 last:border-0"
     >
       <span className="text-gray-200">
-        <div className="w-25 h-15 bg-white rounded-lg flex items-center justify-center">
+        <div className="w-25 h-15 bg-gray-700 rounded-lg flex items-center justify-center">
           <img
           src={platformMap[o.platform]?.logo}
           alt={platformMap[o.platform]?.name}
@@ -84,7 +91,7 @@ export default function MovieCard({ movie }: Props) {
 
   return (
     <div className="bg-[#161B22] border border-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
-      <div className="flex gap-6">
+      <div className="flex gap-6 items-center">
 
         {/* Poster */}
         {movie.poster ? (
@@ -102,66 +109,73 @@ export default function MovieCard({ movie }: Props) {
         {/* Movie Info */}
         <div className="flex-1">
 
-          <h2 className="text-3xl font-bold">
+          <h2 className="text-3xl font-bold tracking-tight text-white mb-2">
             {movie.title}
           </h2>
 
-          <p className="text-gray-400 mb-6">
-            {movie.year}
+          <p className="text-sm text-gray-400 font-medium mb-6">
+            Released • {movie.year} • {genres || "Unknown Genre"}
           </p>
 
           {/* Subscription */}
-          <div className="mb-5">
-            <h3 className="flex items-center gap-2 text-lg font-semibold mb-2">
-              <Popcorn size={18} />
+          <div className="mb-5" >
+            <span className="inline-flex items-center bg-[#1E3A2F] text-[#A7F3D0] px-2.5 py-1 rounded-full text-[13px] font-semibold mb-2.5">
+              <Popcorn className="w-4 h-4 shrink-0 mr-2" /> 
               Subscription
-            </h3>
+            </span>
 
-            {grouped.subscription.length > 0 ? (
+            <div className="flex flex-wrap gap-3">
+              {grouped.subscription.length > 0 ? (
               grouped.subscription.map((o) =>
                 renderOffer(o, "subscription")
               )
             ) : (
-              <p className="text-gray-500">
+              <p className="text-gray-500 italic">
                 Not available
               </p>
             )}
+            </div>
+            
           </div>
 
           {/* Rent */}
           <div className="mb-5">
-            <h3 className="flex items-center gap-2 text-lg font-semibold mb-2">
-              <IndianRupee size={18} />
+            <span className="inline-flex items-center bg-[#476592] text-[#d3e4f9] px-2.5 py-1 rounded-full text-[13px] font-semibold mb-2.5">
+              <IndianRupee className="w-4 h-4 shrink-0 mr-2" />
               Rent
-            </h3>
-
+            </span>
+            
+            <div className="flex flex-wrap gap-3">
             {grouped.rent.length > 0 ? (
               grouped.rent.map((o) =>
                 renderOffer(o, "rent")
               )
             ) : (
-              <p className="text-gray-500">
+              <p className="text-gray-500 italic">
                 Not available
               </p>
             )}
+            </div>
           </div>
 
           {/* Buy */}
           <div>
-            <h3 className="flex items-center gap-2 text-lg font-semibold mb-2">
-              <ShoppingCart size={18} />
+            <span className="inline-flex items-center bg-[#1E3A8A] text-[#BFDBFE] px-2.5 py-1 rounded-full text-[13px] font-semibold mb-2.5">
+              <ShoppingCart className="w-4 h-4 shrink-0 mr-2" />
               Buy
-            </h3>
+            </span>
 
+            <div className="flex flex-wrap gap-3">
             {grouped.buy.length > 0 ? (
               grouped.buy.map((o) =>
                 renderOffer(o, "buy")
               )
             ) : (
-              <p className="text-gray-500">
+              <p className="text-gray-500 italic">
                 Not available
               </p>
             )}
+            </div>
           </div>
 
         </div>

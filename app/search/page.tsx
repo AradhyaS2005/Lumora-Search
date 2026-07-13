@@ -48,9 +48,17 @@ export default function SearchPage() {
       <div className="relative pt-12">
     <BackButton />
 
-    <h1 className="m-4 text-xl font-semibold">
-      Search Results for: {query}
+    <h1 className="text-4xl font-bold mt-5">
+      Search Results 
     </h1>
+
+    <p className="text-gray-400 mt-2">
+      Showing {movies.length} results for
+    </p>
+
+    <p className="text-2xl font-semibold texxt-white mt-2">
+      "{query}"
+    </p>
 
     {/* LOADING STATE */}
     {loading && (

@@ -13,6 +13,7 @@ export function processMovie(rawMovie: any) {
     year: rawMovie.year,
     poster: rawMovie.poster,
     offers: clean,
+    genres: rawMovie.genres,
     offersUnavailable: rawMovie.rawOffers.unavailable,
   };
 }

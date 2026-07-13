@@ -39,6 +39,7 @@ try {
 
   const results: MovieResult[] = await Promise.all(
     movies.slice(0,5).map(async (movie: any) => {
+      //console.log(movie.genre_ids);
       const rawOffers = await scrapeAll(movie.title)
       
       
@@ -51,6 +52,7 @@ try {
         ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
         : "",
         rawOffers,
+        genres: movie.genre_ids,
       })
     })
   )
