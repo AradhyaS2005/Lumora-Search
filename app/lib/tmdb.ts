@@ -55,3 +55,18 @@ export async function searchMovies(query: string) {
     }
     return []
 }
+
+export async function getPopularMovies() {
+    const url = `https://api.themoviedb.org/3/movie/popular` +
+        `?api_key=${API_KEY}` +
+        `&language=en-IN` +
+        `&page=1`
+
+        const res = await fetch(url)
+        if(!res.ok) {
+            throw new Error("TMDB popular movies fetch failed")
+        }
+
+        const data = await res.json()
+        return data.results
+}

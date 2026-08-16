@@ -1,4 +1,5 @@
 import BackButton from "@/app/components/BackButton";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -37,6 +38,10 @@ export default async function MoviePage({ params }: Props) {
       cache: "no-store",
     }
   );
+
+  if(movieRes.status === 404) {
+    notFound()
+  }
 
   if (!movieRes.ok) {
     throw new Error(
