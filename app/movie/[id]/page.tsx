@@ -145,6 +145,7 @@ export default async function MoviePage({ params }: Props) {
                 style={{
                   display: "flex",
                   gap: "10px",
+                  flexWrap: "wrap",
                 }}
               >
 
@@ -180,6 +181,7 @@ export default async function MoviePage({ params }: Props) {
                 style={{
                   display: "flex",
                   gap: "10px",
+                  flexWrap: "wrap",
                 }}
               >
 
@@ -215,6 +217,7 @@ export default async function MoviePage({ params }: Props) {
                 style={{
                   display: "flex",
                   gap: "10px",
+                  flexWrap: "wrap",
                 }}
               >
 

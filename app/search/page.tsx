@@ -14,11 +14,13 @@ export default function SearchPage() {
 
   const [movies, setMovies] = useState<MovieResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("")
 
  useEffect(() => {
   if (!query) return;
 
   setLoading(true);
+  setError("");
 
   fetch(`/api/search?q=${encodeURIComponent(query)}`)
     .then(async (res) => {
@@ -36,6 +38,7 @@ export default function SearchPage() {
     .catch((err) => {
       console.error("Search error:", err);
       setMovies([]);
+      setError(err.message);
     })
     .finally(() => {
       setLoading(false);
@@ -66,7 +69,15 @@ export default function SearchPage() {
     )}
 
     {/* EMPTY STATE */}
-    {!loading && movies.length === 0 && (
+    {!loading && error && (
+      <div className="m-4 text-center">
+        <p className="text-gray-400">
+          {error}
+        </p>
+      </div>
+    )}
+
+    {!loading && !error && movies.length === 0 && (
       <p className="m-4 text-gray-400">No results found</p>
     )}
 

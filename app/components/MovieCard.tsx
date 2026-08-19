@@ -1,5 +1,6 @@
 import type { MovieResult } from "@/types/movie";
 import { groupOffers } from "@/utils/groupOffers";
+import Link from "next/link";
 import { genreMap } from "@/app/lib/genres";
 import {
   Popcorn,
@@ -90,7 +91,7 @@ export default function MovieCard({ movie }: Props) {
 }
 
   return (
-    <div className="bg-[#161B22] border border-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
+    <Link href={`/movie/${movie.id}`} className="group flex gap-5 p-5 rounded-xl border border-gray-800 bg-[#111827] hover:border-gray-600 hover:bg-[#151d2d] transition">
       <div className="flex gap-6 items-center">
 
         {/* Poster */}
@@ -98,10 +99,10 @@ export default function MovieCard({ movie }: Props) {
           <img
             src={movie.poster}
             alt={movie.title}
-            className="w-100 rounded-xl object-cover"
+            className="w-32 h-48 object-cover rounded-lg shrink-0 transition-transform duration-300 group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="w-36 h-52 rounded-xl border border-gray-700 flex items-center justify-center text-gray-500">
+          <div className="w-32 h-48 shrink-0 rounded-lg border border-gray-700 flex items-center justify-center text-gray-500 text-sm">
             No Poster
           </div>
         )}
@@ -109,11 +110,11 @@ export default function MovieCard({ movie }: Props) {
         {/* Movie Info */}
         <div className="flex-1">
 
-          <h2 className="text-3xl font-bold tracking-tight text-white mb-2">
+          <h2 className="text-xl font-semibold group-hover:text-gray-300 transition">
             {movie.title}
           </h2>
 
-          <p className="text-sm text-gray-400 font-medium mb-6">
+          <p className="text-sm text-gray-500 mt-1 mb-3">
             Released • {movie.year} • {genres || "Unknown Genre"}
           </p>
 
@@ -180,6 +181,6 @@ export default function MovieCard({ movie }: Props) {
 
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
