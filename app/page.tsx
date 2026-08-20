@@ -1,14 +1,23 @@
 import SearchBar from "./components/SearchBar";
 import { getPopularMovies } from "@/app/lib/tmdb";
 import Link from "next/link";
+import { getCache } from "./lib/cache";
+import { setCache } from "./lib/cache";
 
 export default async function Home() {
   let popularMovies = [];
 
-  try {
-    popularMovies = await getPopularMovies();
-  } catch (error) {
-    console.error("Failed to fetch popular movies:", error);
+  const cacheKey = "popular-movies";
+
+  const cached = getCache(cacheKey);
+  if (cached) {
+    popularMovies = cached;
+  } else {
+    try {
+      popularMovies = await getPopularMovies();
+    } catch (error) {
+      console.error("Failed to fetch popular movies:", error);
+    }
   }
 
   return (

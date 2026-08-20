@@ -56,6 +56,8 @@ try {
       })
     })
   )
+   
+  setCache(cacheKey, results)
 
   return Response.json(results)
 }

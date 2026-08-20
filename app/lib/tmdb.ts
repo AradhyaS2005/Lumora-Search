@@ -1,59 +1,59 @@
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY
 
+async function tmdbFetch(url: string) {
+    const MAX_RETRIES = 3
 
-export async function searchMovies(query: string) {
-    if (!API_KEY) {
-        throw new Error("TMDB API key is missing")
-    }
-    const url = `https://api.themoviedb.org/3/search/movie` +
-        `?api_key=${API_KEY}` +
-        `&query=${encodeURIComponent(query)}`
-
-    console.log("[TMDB] Searching:", query)
-
-    for (let attempt = 1; attempt <= 2; attempt++) {
+    for(let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         const controller = new AbortController()
-        const timeout = setTimeout(() => {
+
+        const timeoutId = setTimeout(() => {
             controller.abort()
-        }, 5000)
+        }, 8000)
 
         try {
-
-
             const res = await fetch(url, {
                 signal: controller.signal,
+                cache: "no-store"
             })
 
-
-            if (!res.ok) {
-                throw new Error(`TMDB returned ${res.status}`)
+            if(!res.ok) {
+                throw new Error(
+                    `TMDB request failed: ${res.status} ${res.statusText}`
+                )
             }
 
-            const data = await res.json()
-
-            console.log(
-                "[TMDB] Found",
-                data.results?.length ?? 0,
-                "movies"
-            )
-            return data.results ?? []
-        } catch (err) {
+            return await res.json()
+        } catch (err: any) {
             console.error(
                 `[TMDB] Attempt ${attempt} failed:`,
                 err
             )
 
-            if (attempt === 2) {
-                throw err
+            if(attempt == MAX_RETRIES) {
+                throw new Error("TMDB request faield after 3 attempts");
             }
 
-            console.log("[TMDB] Retrying...")
-        } finally {
-            clearTimeout(timeout)
-        }
+            console.log("[TMDB] Retrying...");
 
+            await new Promise((resolve) => setTimeout(resolve, 500 * attempt))
+        } finally {
+            clearTimeout(timeoutId)
+        }
     }
-    return []
+}
+
+export async function searchMovies(query: string) {
+    console.log("[TMDB] Searching:", query)
+
+    const url = `https://api.themoviedb.org/3/search/movie` +
+        `?api_key=${API_KEY}` +
+        `&query=${encodeURIComponent(query)}`
+
+    const data = await tmdbFetch(url)    
+
+    console.log("[TMDB] Found", data.results?.length ?? 0, "movies" )
+
+    return data.results ?? []
 }
 
 export async function getPopularMovies() {
@@ -62,11 +62,7 @@ export async function getPopularMovies() {
         `&language=en-IN` +
         `&page=1`
 
-        const res = await fetch(url)
-        if(!res.ok) {
-            throw new Error("TMDB popular movies fetch failed")
-        }
+        const data = await tmdbFetch(url)
 
-        const data = await res.json()
-        return data.results
+        return data.results ?? []
 }
